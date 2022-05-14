@@ -6,6 +6,8 @@ namespace CorneliusCup.Golf.API.Entities
     [Owned]
     public class Tee<T>
     {
+        public int TeeId { get; set; }
+
         public TeeType TeeType { get; set; }
 
         public int Par { get; set; }

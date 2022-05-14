@@ -8,9 +8,24 @@ namespace CorneliusCup.Golf.API.Mappings
     {
         public DomainToResponseMappingProfile()
         {
-            CreateMap<Venue, VenueResponse>();
-            CreateMap<GolfCourse, GolfCourseResponse>();
-            CreateMap<Tee, TeeResponse>();
+            CreateMap<Venue, VenueResponse>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.VenueId)
+                );
+
+            CreateMap<GolfCourse, GolfCourseResponse>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.GolfCourseId)
+                );
+
+            CreateMap<Tee, TeeResponse>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.TeeId)
+                );
+
             CreateMap<HoleDetail, HoleDetailResponse>();
         }
 
