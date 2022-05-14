@@ -1,5 +1,7 @@
 using CorneliusCup.Golf.API;
 using CorneliusCup.Golf.API.Entities;
+using CorneliusCup.Golf.API.Services;
+using CorneliusCup.Golf.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +53,8 @@ builder.Services.AddVersionedApiExplorer(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+builder.Services.AddTransient<IVenueService, VenueService>();
 
 var app = builder.Build();
 

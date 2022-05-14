@@ -1,6 +1,6 @@
-using AutoMapper;
-using CorneliusCup.Golf.API.Entities;
+using CorneliusCup.Golf.API.Requests;
 using CorneliusCup.Golf.API.Responses;
+using CorneliusCup.Golf.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,28 +13,41 @@ namespace CorneliusCup.Golf.API.Controllers.V1
     [Produces("application/json")]
     public class VenuesController : ControllerBase
     {
-        private readonly CorneliusCupDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IVenueService _venueService;
         private readonly ILogger<VenuesController> _logger;
 
-        public VenuesController(CorneliusCupDbContext context, IMapper mapper, ILogger<VenuesController> logger)
+        public VenuesController(IVenueService venueService, ILogger<VenuesController> logger)
         {
-            _context = context;
-            _mapper = mapper;
+            _venueService = venueService;
             _logger = logger;
         }
 
         [HttpGet]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<VenueResponse>>> GetAllVenues()
+        public async Task<ActionResult<Response<VenueResponse>>> GetVenues()
         {
-            var venues = await _context.Venues
-                .ToListAsync();
-
-            var venuesResponse = _mapper.Map<List<VenueResponse>>(venues);
+            var venuesResponse = await _venueService.GetVenues();
 
             return Ok(new Response<VenueResponse>(venuesResponse));
+        }
+
+        [HttpPost]
+        [MapToApiVersion("1.0")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<VenueResponse>> CreateVenue(VenueRequest venueRequest)
+        {
+            try
+            {
+                var venueResponse = await _venueService.CreateVenue(venueRequest);
+
+                return CreatedAtAction(nameof(GetVenue), new { venueId = venueResponse.Id }, venueResponse);
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
@@ -44,17 +57,64 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<VenueResponse>> GetVenue(int venueId)
         {
-            var venue = await _context.Venues
-                .SingleOrDefaultAsync(x => x.VenueId == venueId);
-            
-            if (venue is null)
+            var venueResponse = await _venueService.GetVenue(venueId);
+
+            if (venueResponse is null)
             {
                 return NotFound();
             }
 
-            var venueResponse = _mapper.Map<VenueResponse>(venue);
-
             return Ok(venueResponse);
+        }
+
+        [HttpPut]
+        [MapToApiVersion("1.0")]
+        [Route("{venueId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<VenueResponse>> UpdateVenue(int venueId, VenueRequest venueRequest)
+        {
+            try
+            {
+                var result = await _venueService.UpdateVenue(venueId, venueRequest);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [MapToApiVersion("1.0")]
+        [Route("{venueId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> DeleteVenue(int venueId)
+        {
+            try
+            {
+                var result = await _venueService.DeleteVenue(venueId);
+
+                if (result is null)
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
         }
 
         [HttpGet]
@@ -64,19 +124,39 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Response<GolfCourseResponse>>> GetVenueGolfCourses(int venueId)
         {
-            var venue = await _context.Venues
-                .Include(x=> x.GolfCourses)
-                .Where(x => x.VenueId == venueId)
-                .SingleOrDefaultAsync();
+            var golfCourseResponse = await _venueService.GetGolfCourses(venueId);
 
-            if(venue is null)
+            if (golfCourseResponse is null)
             {
                 return NotFound();
             }
 
-            var golfCourseResponse = _mapper.Map<List<GolfCourseResponse>>(venue.GolfCourses);
-
             return Ok(new Response<GolfCourseResponse>(golfCourseResponse));
+        }
+
+        [HttpPost]
+        [MapToApiVersion("1.0")]
+        [Route("{venueId}/golfcourses")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<GolfCourseResponse>> CreateVenueGolfCourse(int venueId, GolfCourseRequest golfCourseRequest)
+        {
+            try
+            {
+                var golfCourseResponse = await _venueService.CreateGolfCourse(venueId, golfCourseRequest);
+
+                if (golfCourseResponse is null)
+                {
+                    return NotFound();
+                }
+
+                return CreatedAtAction(nameof(GetVenueGolfCourse), new { venueId = golfCourseResponse.Id }, golfCourseResponse);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]
@@ -86,17 +166,12 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GolfCourseResponse>> GetVenueGolfCourse(int venueId, int golfCourseId)
         {
-            var golfCourse = await _context.GolfCourses
-                .Where(x => EF.Property<int>(x, "VenueId") == venueId)
-                .Where(x => x.GolfCourseId == golfCourseId)
-                .SingleOrDefaultAsync();
+            var golfCourseResponse = await _venueService.GetGolfCourse(venueId, golfCourseId);
 
-            if(golfCourse is null)
+            if (golfCourseResponse is null)
             {
                 return NotFound();
             }
-
-            var golfCourseResponse = _mapper.Map<GolfCourseResponse>(golfCourse);
 
             return Ok(golfCourseResponse);
         }
@@ -108,17 +183,12 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Response<TeeResponse>>> GetVenueGolfCourseTees(int venueId, int golfCourseId)
         {
-            var golfCourse = await _context.GolfCourses
-                .Where(x => EF.Property<int>(x, "VenueId") == venueId)
-                .Where(x => x.GolfCourseId == golfCourseId)
-                .SingleOrDefaultAsync();
+            var teeResponse = await _venueService.GetGolfCourseTees(venueId, golfCourseId);
 
-            if (golfCourse is null)
+            if (teeResponse is null)
             {
                 return NotFound();
             }
-
-            var teeResponse = _mapper.Map<List<TeeResponse>>(golfCourse.Tees);
 
             return Ok(new Response<TeeResponse>(teeResponse));
         }
@@ -130,45 +200,14 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TeeResponse>> GetVenueGolfCourseTee(int venueId, int golfCourseId, int teeId)
         {
-            var golfCourse = await _context.GolfCourses
-                .Where(x => EF.Property<int>(x, "VenueId") == venueId)
-                .Where(x => x.GolfCourseId == golfCourseId)
-                .SingleOrDefaultAsync();
+            var teeResponse = await _venueService.GetGolfCourseTee(venueId, golfCourseId, teeId);
 
-            if (golfCourse is null)
+            if (teeResponse is null)
             {
                 return NotFound();
             }
-
-            var tee = golfCourse.Tees.SingleOrDefault(x => x.TeeId == teeId);
-
-            if (tee is null)
-            {
-                return NotFound();
-            }
-
-            var teeResponse = _mapper.Map<TeeResponse>(tee);
 
             return Ok(teeResponse);
         }
-
-        //[HttpPost]
-        //[MapToApiVersion("1.0")]
-        //[ProducesResponseType(StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult<VenueResponse>> CreateVenue(Venue venue)
-        //{
-        //    try
-        //    {
-        //        var trackedVenue = await _context.Venues.AddAsync(venue);
-        //        await _context.SaveChangesAsync();
-
-        //        return CreatedAtAction(nameof(GetVenue), new { venueId = trackedVenue.Entity.VenueId }, GetVenue(trackedVenue.Entity.VenueId));
-        //    } 
-        //    catch (DbUpdateException)
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
     }
 }
