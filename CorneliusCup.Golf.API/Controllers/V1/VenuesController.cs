@@ -38,16 +38,18 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<VenueResponse>> CreateVenue(VenueRequest venueRequest)
         {
+            VenueResponse venueResponse;
+
             try
             {
-                var venueResponse = await _venueService.CreateVenue(venueRequest);
-
-                return CreatedAtAction(nameof(GetVenue), new { venueId = venueResponse.Id }, venueResponse);
+                venueResponse = await _venueService.CreateVenue(venueRequest);
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
-                return BadRequest();
+                return Problem(ex.Message, statusCode: 400);
             }
+
+            return CreatedAtAction(nameof(GetVenue), new { venueId = venueResponse.Id }, venueResponse);
         }
 
         [HttpGet]
@@ -57,11 +59,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<VenueResponse>> GetVenue(int venueId)
         {
-            var venueResponse = await _venueService.GetVenue(venueId);
+            VenueResponse venueResponse;
 
-            if (venueResponse is null)
+            try
             {
-                return NotFound();
+                venueResponse = await _venueService.GetVenue(venueId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return Ok(venueResponse);
@@ -77,16 +83,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         {
             try
             {
-                var result = await _venueService.UpdateVenue(venueId, venueRequest);
-
-                if (result is null)
-                {
-                    return NotFound();
-                }
+                await _venueService.UpdateVenue(venueId, venueRequest);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return BadRequest();
+                return Problem(ex.Message, statusCode: 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return NoContent();
@@ -102,16 +107,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         {
             try
             {
-                var result = await _venueService.DeleteVenue(venueId);
-
-                if (result is null)
-                {
-                    return NotFound();
-                }
+                await _venueService.DeleteVenue(venueId);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return BadRequest();
+                return Problem(ex.Message, statusCode: 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return NoContent();
@@ -124,11 +128,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Response<GolfCourseResponse>>> GetVenueGolfCourses(int venueId)
         {
-            var golfCourseResponse = await _venueService.GetGolfCourses(venueId);
+            IEnumerable<GolfCourseResponse> golfCourseResponse;
 
-            if (golfCourseResponse is null)
+            try
             {
-                return NotFound();
+                golfCourseResponse = await _venueService.GetGolfCourses(venueId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return Ok(new Response<GolfCourseResponse>(golfCourseResponse));
@@ -142,21 +150,22 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GolfCourseResponse>> CreateVenueGolfCourse(int venueId, GolfCourseRequest golfCourseRequest)
         {
+            GolfCourseResponse golfCourseResponse;
+
             try
             {
-                var golfCourseResponse = await _venueService.CreateGolfCourse(venueId, golfCourseRequest);
-
-                if (golfCourseResponse is null)
-                {
-                    return NotFound();
-                }
-
-                return CreatedAtAction(nameof(GetVenueGolfCourse), new { venueId = golfCourseResponse.Id }, golfCourseResponse);
+                golfCourseResponse = await _venueService.CreateGolfCourse(venueId, golfCourseRequest);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return BadRequest();
+                return Problem(ex.Message, statusCode: 400);
             }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
+            }
+
+            return CreatedAtAction(nameof(GetVenueGolfCourse), new { venueId = venueId, golfCourseId = golfCourseResponse.Id }, golfCourseResponse);
         }
 
         [HttpGet]
@@ -166,11 +175,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<GolfCourseResponse>> GetVenueGolfCourse(int venueId, int golfCourseId)
         {
-            var golfCourseResponse = await _venueService.GetGolfCourse(venueId, golfCourseId);
+            GolfCourseResponse golfCourseResponse;
 
-            if (golfCourseResponse is null)
+            try
             {
-                return NotFound();
+                golfCourseResponse = await _venueService.GetGolfCourse(venueId, golfCourseId);              
+            }
+            catch(InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return Ok(golfCourseResponse);
@@ -183,11 +196,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Response<TeeResponse>>> GetVenueGolfCourseTees(int venueId, int golfCourseId)
         {
-            var teeResponse = await _venueService.GetGolfCourseTees(venueId, golfCourseId);
+            IEnumerable<TeeResponse> teeResponse;
 
-            if (teeResponse is null)
+            try
             {
-                return NotFound();
+                teeResponse = await _venueService.GetGolfCourseTees(venueId, golfCourseId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return Ok(new Response<TeeResponse>(teeResponse));
@@ -200,11 +217,15 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TeeResponse>> GetVenueGolfCourseTee(int venueId, int golfCourseId, int teeId)
         {
-            var teeResponse = await _venueService.GetGolfCourseTee(venueId, golfCourseId, teeId);
+            TeeResponse teeResponse;
 
-            if (teeResponse is null)
+            try
             {
-                return NotFound();
+                teeResponse = await _venueService.GetGolfCourseTee(venueId, golfCourseId, teeId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
             }
 
             return Ok(teeResponse);

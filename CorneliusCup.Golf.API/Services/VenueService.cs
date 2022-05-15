@@ -35,66 +35,46 @@ namespace CorneliusCup.Golf.API.Services
             return _mapper.Map<VenueResponse>(trackedVenue.Entity);
         }
 
-        public async Task<VenueResponse?> GetVenue(int venueId)
+        public async Task<VenueResponse> GetVenue(int venueId)
         {
             var venue = await _context.Venues
-                .SingleOrDefaultAsync(x => x.VenueId == venueId);
+                .SingleAsync(x => x.VenueId == venueId);
 
             return _mapper.Map<VenueResponse>(venue);
         }
 
-        public async Task<int?> UpdateVenue(int venueId, VenueRequest venueRequest)
+        public async Task<int> UpdateVenue(int venueId, VenueRequest venueRequest)
         {
             var venue = await _context.Venues
-                .SingleOrDefaultAsync(x => x.VenueId == venueId);
-
-            if (venue is null)
-            {
-                return null;
-            }
+                .SingleAsync(x => x.VenueId == venueId);
 
             _mapper.Map(venueRequest, venue);
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<int?> DeleteVenue(int venueId)
+        public async Task<int> DeleteVenue(int venueId)
         {
             var venue = await _context.Venues
-                .SingleOrDefaultAsync(x => x.VenueId == venueId);
-
-            if (venue is null)
-            {
-                return null;
-            }
+                .SingleAsync(x => x.VenueId == venueId);
 
             _context.Remove(venue);
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<GolfCourseResponse>?> GetGolfCourses(int venueId)
+        public async Task<IEnumerable<GolfCourseResponse>> GetGolfCourses(int venueId)
         {
             var venue = await _context.Venues
                 .Include(x => x.GolfCourses)
                 .Where(x => x.VenueId == venueId)
-                .SingleOrDefaultAsync();
-
-            if (venue is null)
-            {
-                return null;
-            }
+                .SingleAsync();
 
             return _mapper.Map<List<GolfCourseResponse>>(venue.GolfCourses);
         }
 
-        public async Task<GolfCourseResponse?> CreateGolfCourse(int venueId, GolfCourseRequest golfCourseRequest)
+        public async Task<GolfCourseResponse> CreateGolfCourse(int venueId, GolfCourseRequest golfCourseRequest)
         {
             var venue = await _context.Venues
-                .SingleOrDefaultAsync(x => x.VenueId == venueId);
-
-            if (venue is null)
-            {
-                return null;
-            }
+                .SingleAsync(x => x.VenueId == venueId);
 
             var golfcourse = _mapper.Map<GolfCourse>(golfCourseRequest);
             golfcourse.Venue = venue;
@@ -106,54 +86,34 @@ namespace CorneliusCup.Golf.API.Services
             return _mapper.Map<GolfCourseResponse>(trackedGolfCourse.Entity);
         }
 
-        public async Task<GolfCourseResponse?> GetGolfCourse(int venueId, int golfCourseId)
+        public async Task<GolfCourseResponse> GetGolfCourse(int venueId, int golfCourseId)
         {
             var golfCourse = await _context.GolfCourses
                 .Where(x => EF.Property<int>(x, "VenueId") == venueId)
                 .Where(x => x.GolfCourseId == golfCourseId)
-                .SingleOrDefaultAsync();
-
-            if (golfCourse is null)
-            {
-                return null;
-            }
+                .SingleAsync();
 
             return _mapper.Map<GolfCourseResponse>(golfCourse);
         }
 
-        public async Task<IEnumerable<TeeResponse>?> GetGolfCourseTees(int venueId, int golfCourseId)
+        public async Task<IEnumerable<TeeResponse>> GetGolfCourseTees(int venueId, int golfCourseId)
         {
             var golfCourse = await _context.GolfCourses
                 .Where(x => EF.Property<int>(x, "VenueId") == venueId)
                 .Where(x => x.GolfCourseId == golfCourseId)
-                .SingleOrDefaultAsync();
-
-            if (golfCourse is null)
-            {
-                return null;
-            }
+                .SingleAsync();
 
             return _mapper.Map<List<TeeResponse>>(golfCourse.Tees);
         }
 
-        public async Task<TeeResponse?> GetGolfCourseTee(int venueId, int golfCourseId, int teeId)
+        public async Task<TeeResponse> GetGolfCourseTee(int venueId, int golfCourseId, int teeId)
         {
             var golfCourse = await _context.GolfCourses
                 .Where(x => EF.Property<int>(x, "VenueId") == venueId)
                 .Where(x => x.GolfCourseId == golfCourseId)
-                .SingleOrDefaultAsync();
+                .SingleAsync();
 
-            if (golfCourse is null)
-            {
-                return null;
-            }
-
-            var tee = golfCourse.Tees.SingleOrDefault(x => x.TeeId == teeId);
-
-            if (tee is null)
-            {
-                return null;
-            }
+            var tee = golfCourse.Tees.Single(x => x.TeeId == teeId);
 
             return _mapper.Map<TeeResponse>(tee);
         }

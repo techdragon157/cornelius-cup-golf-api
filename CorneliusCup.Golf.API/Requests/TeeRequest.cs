@@ -4,8 +4,6 @@ namespace CorneliusCup.Golf.API.Requests
 {
     public class TeeRequest<T>
     {
-        public int Id { get; set; }
-
         public TeeType TeeType { get; set; }
 
         public int Par { get; set; }
