@@ -3,6 +3,7 @@ using CorneliusCup.Golf.API.Responses;
 using CorneliusCup.Golf.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CorneliusCup.Golf.API.Controllers.V1
 {
@@ -23,6 +24,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpGet]
+        [SwaggerOperation("Get a list of all Venues")]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<Response<VenueResponse>>> GetVenues()
@@ -33,6 +35,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpPost]
+        [SwaggerOperation("Create a new Venue")]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,6 +56,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpGet]
+        [SwaggerOperation("Get a single Venue")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -74,6 +78,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpPut]
+        [SwaggerOperation("Update a Venue")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,6 +103,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpDelete]
+        [SwaggerOperation("Delete a Venue")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -122,6 +128,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpGet]
+        [SwaggerOperation("Get a list of all Golf Courses")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}/golfcourses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -143,6 +150,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpPost]
+        [SwaggerOperation("Create a new Golf Course")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}/golfcourses")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -169,6 +177,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpGet]
+        [SwaggerOperation("Get a single Golf Course")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}/golfcourses/{golfCourseId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -190,6 +199,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpGet]
+        [SwaggerOperation("Get a list of all Tees on a Golf Course")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}/golfcourses/{golfCourseId}/tees")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -211,6 +221,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         }
 
         [HttpGet]
+        [SwaggerOperation("Get a single Tee on a Golf Course")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}/golfcourses/{golfCourseId}/tees/{teeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

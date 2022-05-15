@@ -51,7 +51,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => options.EnableAnnotations());
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Services.AddTransient<IVenueService, VenueService>();

@@ -21,6 +21,8 @@ namespace CorneliusCup.Golf.API.Entities
 
         public Competition? Competition { get; set; }
 
+        public Venue? Venue { get; set; }
+
         public GolfCourse? GolfCourse { get; set; }
     }
 }
