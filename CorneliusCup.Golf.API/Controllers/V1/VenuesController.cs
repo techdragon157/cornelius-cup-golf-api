@@ -81,10 +81,10 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [SwaggerOperation("Update a Venue")]
         [MapToApiVersion("1.0")]
         [Route("{venueId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<VenueResponse>> UpdateVenue(int venueId, VenueRequest venueRequest)
+        public async Task<ActionResult> UpdateVenue(int venueId, VenueRequest venueRequest)
         {
             try
             {

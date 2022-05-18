@@ -34,7 +34,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasIndex("PlayersPlayerId");
 
-                    b.ToTable("CompetitionPlayer");
+                    b.ToTable("CompetitionPlayer", (string)null);
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Competition", b =>
@@ -56,7 +56,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasKey("CompetitionId");
 
-                    b.ToTable("Competitions");
+                    b.ToTable("Competitions", (string)null);
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.GolfCourse", b =>
@@ -77,7 +77,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("GolfCourses");
+                    b.ToTable("GolfCourses", (string)null);
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Player", b =>
@@ -101,7 +101,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasKey("PlayerId");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.ScoreCard", b =>
@@ -146,7 +146,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("ScoreCards");
+                    b.ToTable("ScoreCards", (string)null);
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Team", b =>
@@ -167,7 +167,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Venue", b =>
@@ -183,7 +183,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasKey("VenueId");
 
-                    b.ToTable("Venues");
+                    b.ToTable("Venues", (string)null);
                 });
 
             modelBuilder.Entity("PlayerTeam", b =>
@@ -198,7 +198,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                     b.HasIndex("TeamsTeamId");
 
-                    b.ToTable("PlayerTeam");
+                    b.ToTable("PlayerTeam", (string)null);
                 });
 
             modelBuilder.Entity("CompetitionPlayer", b =>
@@ -222,7 +222,7 @@ namespace CorneliusCup.Golf.API.Migrations
                         .WithMany("GolfCourses")
                         .HasForeignKey("VenueId");
 
-                    b.OwnsMany("CorneliusCup.Golf.API.Entities.Tee", "Tees", b1 =>
+                    b.OwnsMany("CorneliusCup.Golf.API.Entities.GolfCourse.Tees#CorneliusCup.Golf.API.Entities.Tee", "Tees", b1 =>
                         {
                             b1.Property<int>("GolfCourseId")
                                 .HasColumnType("integer");
@@ -251,12 +251,12 @@ namespace CorneliusCup.Golf.API.Migrations
 
                             b1.HasKey("GolfCourseId", "TeeId");
 
-                            b1.ToTable("Tees");
+                            b1.ToTable("Tees", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("GolfCourseId");
 
-                            b1.OwnsMany("CorneliusCup.Golf.API.Entities.HoleDetail", "HoleDetails", b2 =>
+                            b1.OwnsMany("CorneliusCup.Golf.API.Entities.GolfCourse.Tees#CorneliusCup.Golf.API.Entities.Tee.HoleDetails#CorneliusCup.Golf.API.Entities.HoleDetail", "HoleDetails", b2 =>
                                 {
                                     b2.Property<int>("TeeGolfCourseId")
                                         .HasColumnType("integer");
@@ -284,7 +284,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                                     b2.HasKey("TeeGolfCourseId", "TeeId", "Id");
 
-                                    b2.ToTable("HoleDetail");
+                                    b2.ToTable("HoleDetail", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("TeeGolfCourseId", "TeeId");
@@ -316,7 +316,7 @@ namespace CorneliusCup.Golf.API.Migrations
                         .WithMany()
                         .HasForeignKey("VenueId");
 
-                    b.OwnsMany("CorneliusCup.Golf.API.Entities.Tee<CorneliusCup.Golf.API.Entities.HoleScore>", "Tees", b1 =>
+                    b.OwnsMany("CorneliusCup.Golf.API.Entities.ScoreCard.Tees#CorneliusCup.Golf.API.Entities.Tee<CorneliusCup.Golf.API.Entities.HoleScore>", "Tees", b1 =>
                         {
                             b1.Property<int>("ScoreCardId")
                                 .HasColumnType("integer");
@@ -348,12 +348,12 @@ namespace CorneliusCup.Golf.API.Migrations
 
                             b1.HasKey("ScoreCardId", "Id");
 
-                            b1.ToTable("Tee<HoleScore>");
+                            b1.ToTable("Tee<HoleScore>", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ScoreCardId");
 
-                            b1.OwnsMany("CorneliusCup.Golf.API.Entities.HoleScore", "HoleDetails", b2 =>
+                            b1.OwnsMany("CorneliusCup.Golf.API.Entities.ScoreCard.Tees#CorneliusCup.Golf.API.Entities.Tee<CorneliusCup.Golf.API.Entities.HoleScore>.HoleDetails#CorneliusCup.Golf.API.Entities.HoleScore", "HoleDetails", b2 =>
                                 {
                                     b2.Property<int>("Tee<HoleScore>ScoreCardId")
                                         .HasColumnType("integer");
@@ -384,7 +384,7 @@ namespace CorneliusCup.Golf.API.Migrations
 
                                     b2.HasKey("Tee<HoleScore>ScoreCardId", "Tee<HoleScore>Id", "Id");
 
-                                    b2.ToTable("HoleScore");
+                                    b2.ToTable("HoleScore", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("Tee<HoleScore>ScoreCardId", "Tee<HoleScore>Id");

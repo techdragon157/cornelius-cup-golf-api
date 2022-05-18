@@ -55,6 +55,7 @@ builder.Services.AddSwaggerGen(options => options.EnableAnnotations());
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Services.AddTransient<IVenueService, VenueService>();
+builder.Services.AddTransient<IPlayerService, PlayerService>();
 
 var app = builder.Build();
 

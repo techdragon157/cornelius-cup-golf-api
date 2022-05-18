@@ -27,6 +27,12 @@ namespace CorneliusCup.Golf.API.Mappings
                 );
 
             CreateMap<HoleDetail, HoleDetailResponse>();
+
+            CreateMap<Player, PlayerResponse>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.PlayerId)
+                );
         }
 
     }
