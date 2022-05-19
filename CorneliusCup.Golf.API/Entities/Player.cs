@@ -12,10 +12,8 @@ namespace CorneliusCup.Golf.API.Entities
 
         public int Handicap { get; set; }
 
-        public ICollection<Team> Teams { get; set; } = new List<Team>();
-
-        public ICollection<Competition> Competitions { get; set; } = new List<Competition>();
-
         public ICollection<ScoreCard> ScoreCards { get; set; } = new List<ScoreCard>();
+
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
     }
 }

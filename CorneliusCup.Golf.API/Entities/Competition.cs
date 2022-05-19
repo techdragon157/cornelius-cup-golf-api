@@ -12,6 +12,6 @@ namespace CorneliusCup.Golf.API.Entities
 
         public DateOnly endDate { get; set; }
 
-        public ICollection<Player> Players { get; set; } = new List<Player>();
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
     }
 }

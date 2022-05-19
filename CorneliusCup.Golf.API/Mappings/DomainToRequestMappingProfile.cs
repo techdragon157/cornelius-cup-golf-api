@@ -29,6 +29,8 @@ namespace CorneliusCup.Golf.API.Mappings
             CreateMap<HoleDetailRequest, HoleDetail>();
 
             CreateMap<PlayerRequest, Player>();
+
+            CreateMap<ScoreCardRequest, ScoreCard>();
         }
 
     }

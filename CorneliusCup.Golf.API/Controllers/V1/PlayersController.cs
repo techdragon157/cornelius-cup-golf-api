@@ -127,5 +127,76 @@ namespace CorneliusCup.Golf.API.Controllers.V1
             return NoContent();
         }
 
+        [HttpGet]
+        [SwaggerOperation("Get a list of all Score Cards")]
+        [MapToApiVersion("1.0")]
+        [Route("{playerId}/scorecards")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response<ScoreCardResponse>>> GetPlayerScoreCards(int playerId)
+        {
+            IEnumerable<ScoreCardResponse> scoreCardResponse;
+
+            try
+            {
+                scoreCardResponse = await _playerService.GetScoreCards(playerId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
+            }
+
+            return Ok(new Response<ScoreCardResponse>(scoreCardResponse));
+        }
+
+        [HttpPost]
+        [SwaggerOperation("Create a new Score Card")]
+        [MapToApiVersion("1.0")]
+        [Route("{playerId}/scorecards")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ScoreCardResponse>> CreatePlayerScoreCard(int playerId, ScoreCardRequest scoreCardRequest)
+        {
+            ScoreCardResponse scoreCardResponse;
+
+            try
+            {
+                scoreCardResponse = await _playerService.CreateScoreCard(playerId, scoreCardRequest);
+            }
+            catch (DbUpdateException ex)
+            {
+                return Problem(ex.Message, statusCode: 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
+            }
+
+            return CreatedAtAction(nameof(GetPlayerScoreCard), new { playerId = playerId, scoreCardId = scoreCardResponse.Id }, scoreCardResponse);
+        }
+
+        [HttpGet]
+        [SwaggerOperation("Get a single Score Card")]
+        [MapToApiVersion("1.0")]
+        [Route("{playerId}/scorecards/{scoreCardId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ScoreCardResponse>> GetPlayerScoreCard(int playerId, int scoreCardId)
+        {
+            ScoreCardResponse scoreCardResponse;
+
+            try
+            {
+                scoreCardResponse = await _playerService.GetScoreCard(playerId, scoreCardId);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Problem(ex.Message, statusCode: 404);
+            }
+
+            return Ok(scoreCardResponse);
+        }
+
     }
 }

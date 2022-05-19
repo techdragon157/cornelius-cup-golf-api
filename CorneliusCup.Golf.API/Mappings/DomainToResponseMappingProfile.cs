@@ -33,6 +33,12 @@ namespace CorneliusCup.Golf.API.Mappings
                     dest => dest.Id,
                     opt => opt.MapFrom(src => src.PlayerId)
                 );
+
+            CreateMap<ScoreCard, ScoreCardResponse>()
+                .ForMember(
+                    dest => dest.Id,
+                    opt => opt.MapFrom(src => src.ScoreCardId)
+                );
         }
 
     }

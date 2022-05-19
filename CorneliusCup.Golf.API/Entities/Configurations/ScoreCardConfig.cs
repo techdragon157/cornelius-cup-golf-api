@@ -7,7 +7,7 @@ namespace CorneliusCup.Golf.API.Entities.Configurations
     {
         public void Configure(EntityTypeBuilder<ScoreCard> builder)
         {
-            builder.OwnsMany(x => x.Tees, y =>
+            builder.OwnsOne(x => x.Tee, y =>
                 {
                     y.OwnsMany(z => z.HoleDetails);
                     y.Property(x => x.TeeType)

@@ -89,7 +89,7 @@ namespace CorneliusCup.Golf.API.Services
         public async Task<GolfCourseResponse> GetGolfCourse(int venueId, int golfCourseId)
         {
             var golfCourse = await _context.GolfCourses
-                .Where(x => EF.Property<int>(x, "VenueId") == venueId)
+                .Where(x => x.VenueId == venueId)
                 .Where(x => x.GolfCourseId == golfCourseId)
                 .SingleAsync();
 
@@ -99,7 +99,7 @@ namespace CorneliusCup.Golf.API.Services
         public async Task<IEnumerable<TeeResponse>> GetGolfCourseTees(int venueId, int golfCourseId)
         {
             var golfCourse = await _context.GolfCourses
-                .Where(x => EF.Property<int>(x, "VenueId") == venueId)
+                .Where(x => x.VenueId == venueId)
                 .Where(x => x.GolfCourseId == golfCourseId)
                 .SingleAsync();
 
@@ -109,7 +109,7 @@ namespace CorneliusCup.Golf.API.Services
         public async Task<TeeResponse> GetGolfCourseTee(int venueId, int golfCourseId, int teeId)
         {
             var golfCourse = await _context.GolfCourses
-                .Where(x => EF.Property<int>(x, "VenueId") == venueId)
+                .Where(x => x.VenueId == venueId)
                 .Where(x => x.GolfCourseId == golfCourseId)
                 .SingleAsync();
 

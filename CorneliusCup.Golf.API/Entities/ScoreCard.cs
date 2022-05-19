@@ -15,14 +15,19 @@ namespace CorneliusCup.Golf.API.Entities
 
         public int Nett { get; set; }
 
-        public ICollection<Tee<HoleScore>> Tees { get; set; } = new List<Tee<HoleScore>>();
+        public int TeeId { get; set; }
+        public Tee<HoleScore>? Tee { get; set; }
 
+        public int PlayerId { get; set; }
         public Player? Player { get; set; }
 
+        public int CompetitionId { get; set; }
         public Competition? Competition { get; set; }
 
+        public int VenueId { get; set; }
         public Venue? Venue { get; set; }
 
+        public int GolfCourseId { get; set; }
         public GolfCourse? GolfCourse { get; set; }
     }
 }

@@ -60,5 +60,49 @@ namespace CorneliusCup.Golf.API.Services
             _context.Remove(player);
             return await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<ScoreCardResponse>> GetScoreCards(int playerId)
+        {
+            var scoreCards = await _context.ScoreCards.ToListAsync();
+
+            return _mapper.Map<List<ScoreCardResponse>>(scoreCards);
+        }
+
+        public async Task<ScoreCardResponse> CreateScoreCard(int playerId, ScoreCardRequest scoreCardRequest)
+        {
+            var player = await _context.Players
+                .SingleAsync(x => x.PlayerId == playerId);
+
+            var competition = await _context.Competitions
+                .SingleAsync(x => x.CompetitionId == scoreCardRequest.CompetitionId);
+
+            var venue = await _context.Venues
+                .SingleAsync(x => x.VenueId == scoreCardRequest.VenueId);
+
+            var golfCourse = await _context.GolfCourses
+                .SingleAsync(x => x.GolfCourseId == scoreCardRequest.GolfCourseId);
+
+            var scoreCard = _mapper.Map<ScoreCard>(scoreCardRequest);
+            scoreCard.Player = player;
+            scoreCard.Competition = competition;
+            scoreCard.Venue = venue;
+            scoreCard.GolfCourse = golfCourse;
+
+            var trackedScoreCard = await _context.ScoreCards.AddAsync(scoreCard);
+
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<ScoreCardResponse>(trackedScoreCard.Entity);
+        }
+
+        public async Task<ScoreCardResponse> GetScoreCard(int playerId, int scoreCardId)
+        {
+            var scoreCard = await _context.ScoreCards
+                .Where(x => x.PlayerId == playerId)
+                .Where(x => x.ScoreCardId == scoreCardId)
+                .SingleAsync();
+
+            return _mapper.Map<ScoreCardResponse>(scoreCard);
+        }
     }
 }

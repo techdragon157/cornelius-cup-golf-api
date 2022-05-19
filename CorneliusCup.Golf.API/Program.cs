@@ -29,7 +29,11 @@ builder.Services.Configure<RouteOptions>(options =>
     options.LowercaseQueryStrings = true;
 });
 
-builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers().AddJsonOptions(options => 
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 var corneliusCupDatabase = builder.Configuration.GetConnectionString("CorneliusCupDatabase");
 builder.Services.AddDbContext<CorneliusCupDbContext>(options => options.UseNpgsql(corneliusCupDatabase));

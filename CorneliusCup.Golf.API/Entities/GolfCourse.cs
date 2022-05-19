@@ -8,6 +8,7 @@
 
         public ICollection<Tee> Tees { get; set; } = new List<Tee>();
 
-        public virtual Venue? Venue { get; set; }
+        public int VenueId { get; set; }
+        public Venue? Venue { get; set; }
     }
 }

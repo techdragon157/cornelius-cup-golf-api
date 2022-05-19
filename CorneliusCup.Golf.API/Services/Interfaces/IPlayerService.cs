@@ -14,5 +14,11 @@ namespace CorneliusCup.Golf.API.Services.Interfaces
         public Task<int> UpdatePlayer(int playerId, PlayerRequest playerRequest);
 
         public Task<int> DeletePlayer(int playerId);
+
+        public Task<IEnumerable<ScoreCardResponse>> GetScoreCards(int playerId);
+
+        public Task<ScoreCardResponse> CreateScoreCard(int playerId, ScoreCardRequest scoreCardRequest);
+
+        public Task<ScoreCardResponse> GetScoreCard(int playerId, int scoreCardId);
     }
 }

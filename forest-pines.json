@@ -1,0 +1,122 @@
+{
+  "name": "Forest-Pines",
+  "tees": [
+    {
+      "teeType": 1,
+      "par": 73,
+      "sss": 72,
+      "courseRating": 72.4,
+      "slopeRating": 141,
+      "holeDetails": [
+        {
+          "number": 1,
+          "yards": 384,
+          "par": 4,
+          "strokeIndex": 13
+        },
+        {
+          "number": 2,
+          "yards": 394,
+          "par": 4,
+          "strokeIndex": 5
+        },
+        {
+          "number": 3,
+          "yards": 465,
+          "par": 5,
+          "strokeIndex": 9
+        },
+        {
+          "number": 4,
+          "yards": 320,
+          "par": 4,
+          "strokeIndex": 11
+        },
+        {
+          "number": 5,
+          "yards": 487,
+          "par": 5,
+          "strokeIndex": 3
+        },
+        {
+          "number": 6,
+          "yards": 157,
+          "par": 3,
+          "strokeIndex": 15
+        },
+        {
+          "number": 7,
+          "yards": 385,
+          "par": 4,
+          "strokeIndex": 7
+        },
+        {
+          "number": 8,
+          "yards": 147,
+          "par": 3,
+          "strokeIndex": 17
+        },
+        {
+          "number": 9,
+          "yards": 386,
+          "par": 4,
+          "strokeIndex": 1
+        },
+        {
+          "number": 10,
+          "yards": 476,
+          "par": 5,
+          "strokeIndex": 12
+        },
+        {
+          "number": 11,
+          "yards": 372,
+          "par": 4,
+          "strokeIndex": 8
+        },
+        {
+          "number": 12,
+          "yards": 175,
+          "par": 3,
+          "strokeIndex": 16
+        },
+        {
+          "number": 13,
+          "yards": 373,
+          "par": 4,
+          "strokeIndex": 6
+        },
+        {
+          "number": 14,
+          "yards": 369,
+          "par": 4,
+          "strokeIndex": 14
+        },
+        {
+          "number": 15,
+          "yards": 463,
+          "par": 5,
+          "strokeIndex": 18
+        },
+        {
+          "number": 16,
+          "yards": 182,
+          "par": 3,
+          "strokeIndex": 2
+        },
+        {
+          "number": 17,
+          "yards": 476,
+          "par": 5,
+          "strokeIndex": 10
+        },
+        {
+          "number": 18,
+          "yards": 433,
+          "par": 4,
+          "strokeIndex": 4
+        }
+      ]
+    }
+  ]
+}

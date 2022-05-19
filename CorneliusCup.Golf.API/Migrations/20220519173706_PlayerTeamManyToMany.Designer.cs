@@ -3,6 +3,7 @@ using System;
 using CorneliusCup.Golf.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CorneliusCup.Golf.API.Migrations
 {
     [DbContext(typeof(CorneliusCupDbContext))]
-    partial class CorneliusCupDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220519173706_PlayerTeamManyToMany")]
+    partial class PlayerTeamManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,8 +210,8 @@ namespace CorneliusCup.Golf.API.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("TeeId"));
 
-                            b1.Property<decimal>("CourseRating")
-                                .HasColumnType("numeric");
+                            b1.Property<int>("CourseRating")
+                                .HasColumnType("integer");
 
                             b1.Property<int>("Par")
                                 .HasColumnType("integer");
@@ -304,8 +306,8 @@ namespace CorneliusCup.Golf.API.Migrations
                             b1.Property<int>("ScoreCardId")
                                 .HasColumnType("integer");
 
-                            b1.Property<decimal>("CourseRating")
-                                .HasColumnType("numeric");
+                            b1.Property<int>("CourseRating")
+                                .HasColumnType("integer");
 
                             b1.Property<int>("Par")
                                 .HasColumnType("integer");

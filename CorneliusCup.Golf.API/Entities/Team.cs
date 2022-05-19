@@ -9,7 +9,5 @@ namespace CorneliusCup.Golf.API.Entities
         public string? Name { get; set; }
 
         public ICollection<Player> Players { get; set; } = new List<Player>();
-
-        public Competition? competition { get; set; }
     }
 }

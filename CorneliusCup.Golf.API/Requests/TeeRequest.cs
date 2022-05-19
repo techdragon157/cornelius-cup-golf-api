@@ -10,7 +10,7 @@ namespace CorneliusCup.Golf.API.Requests
 
         public int SSS { get; set; }
 
-        public int CourseRating { get; set; }
+        public decimal CourseRating { get; set; }
 
         public int SlopeRating { get; set; }
 
