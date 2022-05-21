@@ -31,7 +31,9 @@ namespace CorneliusCup.Golf.API.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CompetitionId"));
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<DateOnly>("endDate")
                         .HasColumnType("date");
@@ -40,6 +42,9 @@ namespace CorneliusCup.Golf.API.Migrations
                         .HasColumnType("date");
 
                     b.HasKey("CompetitionId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Competitions");
                 });
@@ -53,14 +58,19 @@ namespace CorneliusCup.Golf.API.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GolfCourseId"));
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                    b.Property<int>("VenueId")
+                    b.Property<int>("ResortId")
                         .HasColumnType("integer");
 
                     b.HasKey("GolfCourseId");
 
-                    b.HasIndex("VenueId");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("ResortId");
 
                     b.ToTable("GolfCourses");
                 });
@@ -74,19 +84,48 @@ namespace CorneliusCup.Golf.API.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PlayerId"));
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)");
 
-                    b.Property<int>("Handicap")
+                    b.Property<short>("Handicap")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(54);
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)54);
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("PlayerId");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Players");
+
+                    b.HasCheckConstraint("CK_Players_Email_EmailAddress", "\"Email\" ~ '^[^@]+@[^@]+$'");
+                });
+
+            modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Resort", b =>
+                {
+                    b.Property<int>("ResortId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ResortId"));
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("ResortId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Resorts");
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.ScoreCard", b =>
@@ -103,26 +142,20 @@ namespace CorneliusCup.Golf.API.Migrations
                     b.Property<int>("GolfCourseId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Gross")
-                        .HasColumnType("integer");
+                    b.Property<short>("Gross")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("Handicap")
-                        .HasColumnType("integer");
+                    b.Property<short>("Handicap")
+                        .HasColumnType("smallint");
 
-                    b.Property<int>("Nett")
-                        .HasColumnType("integer");
+                    b.Property<short>("Nett")
+                        .HasColumnType("smallint");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Stableford")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TeeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("VenueId")
-                        .HasColumnType("integer");
+                    b.Property<short>("Stableford")
+                        .HasColumnType("smallint");
 
                     b.HasKey("ScoreCardId");
 
@@ -131,8 +164,6 @@ namespace CorneliusCup.Golf.API.Migrations
                     b.HasIndex("GolfCourseId");
 
                     b.HasIndex("PlayerId");
-
-                    b.HasIndex("VenueId");
 
                     b.ToTable("ScoreCards");
                 });
@@ -149,29 +180,15 @@ namespace CorneliusCup.Golf.API.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("TeamId");
 
                     b.HasIndex("CompetitionId");
 
                     b.ToTable("Teams");
-                });
-
-            modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Venue", b =>
-                {
-                    b.Property<int>("VenueId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("VenueId"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("VenueId");
-
-                    b.ToTable("Venues");
                 });
 
             modelBuilder.Entity("PlayerTeam", b =>
@@ -191,9 +208,9 @@ namespace CorneliusCup.Golf.API.Migrations
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.GolfCourse", b =>
                 {
-                    b.HasOne("CorneliusCup.Golf.API.Entities.Venue", "Venue")
+                    b.HasOne("CorneliusCup.Golf.API.Entities.Resort", "Resort")
                         .WithMany("GolfCourses")
-                        .HasForeignKey("VenueId")
+                        .HasForeignKey("ResortId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -209,16 +226,17 @@ namespace CorneliusCup.Golf.API.Migrations
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("TeeId"));
 
                             b1.Property<decimal>("CourseRating")
-                                .HasColumnType("numeric");
+                                .HasPrecision(3, 1)
+                                .HasColumnType("numeric(3,1)");
 
-                            b1.Property<int>("Par")
-                                .HasColumnType("integer");
+                            b1.Property<short>("Par")
+                                .HasColumnType("smallint");
 
-                            b1.Property<int>("SSS")
-                                .HasColumnType("integer");
+                            b1.Property<short>("SSS")
+                                .HasColumnType("smallint");
 
-                            b1.Property<int>("SlopeRating")
-                                .HasColumnType("integer");
+                            b1.Property<short>("SlopeRating")
+                                .HasColumnType("smallint");
 
                             b1.Property<string>("TeeType")
                                 .IsRequired()
@@ -226,7 +244,12 @@ namespace CorneliusCup.Golf.API.Migrations
 
                             b1.HasKey("GolfCourseId", "TeeId");
 
+                            b1.HasIndex("TeeType")
+                                .IsUnique();
+
                             b1.ToTable("Tees");
+
+                            b1.HasCheckConstraint("CK_Tees_TeeType_Enum", "\"TeeType\" IN ('White', 'Yellow', 'Red')");
 
                             b1.WithOwner()
                                 .HasForeignKey("GolfCourseId");
@@ -245,17 +268,17 @@ namespace CorneliusCup.Golf.API.Migrations
 
                                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
 
-                                    b2.Property<int>("Number")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Number")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("Par")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Par")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("StrokeIndex")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("StrokeIndex")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("Yards")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Yards")
+                                        .HasColumnType("smallint");
 
                                     b2.HasKey("TeeGolfCourseId", "TeeId", "Id");
 
@@ -268,9 +291,9 @@ namespace CorneliusCup.Golf.API.Migrations
                             b1.Navigation("HoleDetails");
                         });
 
-                    b.Navigation("Tees");
+                    b.Navigation("Resort");
 
-                    b.Navigation("Venue");
+                    b.Navigation("Tees");
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.ScoreCard", b =>
@@ -293,28 +316,23 @@ namespace CorneliusCup.Golf.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CorneliusCup.Golf.API.Entities.Venue", "Venue")
-                        .WithMany()
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("CorneliusCup.Golf.API.Entities.Tee<CorneliusCup.Golf.API.Entities.HoleScore>", "Tee", b1 =>
                         {
                             b1.Property<int>("ScoreCardId")
                                 .HasColumnType("integer");
 
                             b1.Property<decimal>("CourseRating")
-                                .HasColumnType("numeric");
+                                .HasPrecision(3, 1)
+                                .HasColumnType("numeric(3,1)");
 
-                            b1.Property<int>("Par")
-                                .HasColumnType("integer");
+                            b1.Property<short>("Par")
+                                .HasColumnType("smallint");
 
-                            b1.Property<int>("SSS")
-                                .HasColumnType("integer");
+                            b1.Property<short>("SSS")
+                                .HasColumnType("smallint");
 
-                            b1.Property<int>("SlopeRating")
-                                .HasColumnType("integer");
+                            b1.Property<short>("SlopeRating")
+                                .HasColumnType("smallint");
 
                             b1.Property<int>("TeeId")
                                 .HasColumnType("integer");
@@ -325,7 +343,12 @@ namespace CorneliusCup.Golf.API.Migrations
 
                             b1.HasKey("ScoreCardId");
 
+                            b1.HasIndex("TeeType")
+                                .IsUnique();
+
                             b1.ToTable("ScoreCards");
+
+                            b1.HasCheckConstraint("CK_ScoreCards_Tee_TeeType_Enum", "\"Tee_TeeType\" IN ('White', 'Yellow', 'Red')");
 
                             b1.WithOwner()
                                 .HasForeignKey("ScoreCardId");
@@ -341,20 +364,20 @@ namespace CorneliusCup.Golf.API.Migrations
 
                                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b2.Property<int>("Id"));
 
-                                    b2.Property<int>("Number")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Number")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("Par")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Par")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("StrokeIndex")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("StrokeIndex")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("Strokes")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Strokes")
+                                        .HasColumnType("smallint");
 
-                                    b2.Property<int>("Yards")
-                                        .HasColumnType("integer");
+                                    b2.Property<short>("Yards")
+                                        .HasColumnType("smallint");
 
                                     b2.HasKey("Tee<HoleScore>ScoreCardId", "Id");
 
@@ -374,8 +397,6 @@ namespace CorneliusCup.Golf.API.Migrations
                     b.Navigation("Player");
 
                     b.Navigation("Tee");
-
-                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Team", b =>
@@ -410,7 +431,7 @@ namespace CorneliusCup.Golf.API.Migrations
                     b.Navigation("ScoreCards");
                 });
 
-            modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Venue", b =>
+            modelBuilder.Entity("CorneliusCup.Golf.API.Entities.Resort", b =>
                 {
                     b.Navigation("GolfCourses");
                 });

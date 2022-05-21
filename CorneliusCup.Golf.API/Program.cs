@@ -36,7 +36,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var corneliusCupDatabase = builder.Configuration.GetConnectionString("CorneliusCupDatabase");
-builder.Services.AddDbContext<CorneliusCupDbContext>(options => options.UseNpgsql(corneliusCupDatabase));
+builder.Services.AddDbContext<CorneliusCupDbContext>(options => 
+{
+    options.UseNpgsql(corneliusCupDatabase)
+        .UseValidationCheckConstraints()
+        .UseEnumCheckConstraints();
+});
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -58,7 +63,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.EnableAnnotations());
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-builder.Services.AddTransient<IVenueService, VenueService>();
+builder.Services.AddTransient<IResortService, ResortService>();
 builder.Services.AddTransient<IPlayerService, PlayerService>();
 
 var app = builder.Build();

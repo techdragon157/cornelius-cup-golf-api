@@ -7,15 +7,18 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public int ScoreCardId { get; set; }
 
-        public int Handicap { get; set; }
+        [Range(0, 54), Column(TypeName = "smallint")]
+        public short Handicap { get; set; }
 
-        public int Stableford { get; set; }
+        [Range(0, 108), Column(TypeName = "smallint")]
+        public short Stableford { get; set; }
 
-        public int Gross { get; set; }
+        [Range(0, 999), Column(TypeName = "smallint")]
+        public short Gross { get; set; }
 
-        public int Nett { get; set; }
+        [Range(0, 999), Column(TypeName = "smallint")]
+        public short Nett { get; set; }
 
-        public int TeeId { get; set; }
         public Tee<HoleScore>? Tee { get; set; }
 
         public int PlayerId { get; set; }
@@ -23,9 +26,6 @@ namespace CorneliusCup.Golf.API.Entities
 
         public int CompetitionId { get; set; }
         public Competition? Competition { get; set; }
-
-        public int VenueId { get; set; }
-        public Venue? Venue { get; set; }
 
         public int GolfCourseId { get; set; }
         public GolfCourse? GolfCourse { get; set; }

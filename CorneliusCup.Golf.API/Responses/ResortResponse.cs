@@ -1,6 +1,6 @@
 ﻿namespace CorneliusCup.Golf.API.Responses
 {
-    public class VenueResponse
+    public class ResortResponse
     {
         public int Id { get; set; }
 

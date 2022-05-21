@@ -8,7 +8,7 @@ namespace CorneliusCup.Golf.API.Mappings
     {
         public DomainToRequestMappingProfile()
         {
-            CreateMap<VenueRequest, Venue>();
+            CreateMap<ResortRequest, Resort>();
             //.ForMember(
             //    dest => dest.VenueId,
             //    opt => opt.MapFrom(src => src.Id)

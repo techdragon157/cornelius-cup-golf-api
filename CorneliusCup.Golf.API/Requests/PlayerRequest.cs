@@ -1,4 +1,6 @@
-﻿namespace CorneliusCup.Golf.API.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CorneliusCup.Golf.API.Requests
 {
     public class PlayerRequest
     {
@@ -6,6 +8,6 @@
 
         public string? Email { get; set; }
 
-        public int Handicap { get; set; }
+        public short Handicap { get; set; }
     }
 }

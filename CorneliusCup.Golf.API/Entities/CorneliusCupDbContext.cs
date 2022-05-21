@@ -6,7 +6,7 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public CorneliusCupDbContext(DbContextOptions<CorneliusCupDbContext> options) : base(options) { }
 
-        public DbSet<Venue> Venues { get; set; } = default!;
+        public DbSet<Resort> Resorts { get; set; } = default!;
         public DbSet<GolfCourse> GolfCourses { get; set; } = default!;
         public DbSet<Tee> Tees { get; set; } = default!;
         public DbSet<Player> Players { get; set; } = default!;

@@ -12,12 +12,12 @@ namespace CorneliusCup.Golf.API.Controllers.V1
     [Route("v{version:apiVersion}/[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public class VenuesController : ControllerBase
+    public class ResortsController : ControllerBase
     {
-        private readonly IVenueService _venueService;
-        private readonly ILogger<VenuesController> _logger;
+        private readonly IResortService _venueService;
+        private readonly ILogger<ResortsController> _logger;
 
-        public VenuesController(IVenueService venueService, ILogger<VenuesController> logger)
+        public ResortsController(IResortService venueService, ILogger<ResortsController> logger)
         {
             _venueService = venueService;
             _logger = logger;
@@ -27,11 +27,11 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [SwaggerOperation("Get a list of all Venues")]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<VenueResponse>>> GetVenues()
+        public async Task<ActionResult<Response<ResortResponse>>> GetVenues()
         {
-            var venuesResponse = await _venueService.GetVenues();
+            var venuesResponse = await _venueService.GetResorts();
 
-            return Ok(new Response<VenueResponse>(venuesResponse));
+            return Ok(new Response<ResortResponse>(venuesResponse));
         }
 
         [HttpPost]
@@ -39,13 +39,13 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<VenueResponse>> CreateVenue(VenueRequest venueRequest)
+        public async Task<ActionResult<ResortResponse>> CreateVenue(ResortRequest venueRequest)
         {
-            VenueResponse venueResponse;
+            ResortResponse venueResponse;
 
             try
             {
-                venueResponse = await _venueService.CreateVenue(venueRequest);
+                venueResponse = await _venueService.CreateResort(venueRequest);
             }
             catch (DbUpdateException ex)
             {
@@ -61,13 +61,13 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [Route("{venueId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<VenueResponse>> GetVenue(int venueId)
+        public async Task<ActionResult<ResortResponse>> GetVenue(int venueId)
         {
-            VenueResponse venueResponse;
+            ResortResponse venueResponse;
 
             try
             {
-                venueResponse = await _venueService.GetVenue(venueId);
+                venueResponse = await _venueService.GetResort(venueId);
             }
             catch (InvalidOperationException ex)
             {
@@ -84,11 +84,11 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> UpdateVenue(int venueId, VenueRequest venueRequest)
+        public async Task<ActionResult> UpdateVenue(int venueId, ResortRequest venueRequest)
         {
             try
             {
-                await _venueService.UpdateVenue(venueId, venueRequest);
+                await _venueService.UpdateResort(venueId, venueRequest);
             }
             catch (DbUpdateException ex)
             {
@@ -113,7 +113,7 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         {
             try
             {
-                await _venueService.DeleteVenue(venueId);
+                await _venueService.DeleteResort(venueId);
             }
             catch (DbUpdateException ex)
             {

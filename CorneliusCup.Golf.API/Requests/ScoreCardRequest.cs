@@ -8,8 +8,8 @@
 
         public int CompetitionId { get; set; }
 
-        public int VenueId { get; set; }
-
         public int GolfCourseId { get; set; }
+
+        public int TeeId { get; set; }
     }
 }

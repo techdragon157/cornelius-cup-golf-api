@@ -16,7 +16,7 @@ namespace CorneliusCup.Golf.API.Migrations
                 {
                     CompetitionId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     startDate = table.Column<DateOnly>(type: "date", nullable: false),
                     endDate = table.Column<DateOnly>(type: "date", nullable: false)
                 },
@@ -31,26 +31,27 @@ namespace CorneliusCup.Golf.API.Migrations
                 {
                     PlayerId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    Handicap = table.Column<int>(type: "integer", nullable: false, defaultValue: 54)
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: false),
+                    Handicap = table.Column<short>(type: "smallint", nullable: false, defaultValue: (short)54)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Players", x => x.PlayerId);
+                    table.CheckConstraint("CK_Players_Email_EmailAddress", "\"Email\" ~ '^[^@]+@[^@]+$'");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Venues",
+                name: "Resorts",
                 columns: table => new
                 {
-                    VenueId = table.Column<int>(type: "integer", nullable: false)
+                    ResortId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Venues", x => x.VenueId);
+                    table.PrimaryKey("PK_Resorts", x => x.ResortId);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,7 +60,7 @@ namespace CorneliusCup.Golf.API.Migrations
                 {
                     TeamId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     CompetitionId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -73,46 +74,23 @@ namespace CorneliusCup.Golf.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompetitionPlayer",
-                columns: table => new
-                {
-                    CompetitionsCompetitionId = table.Column<int>(type: "integer", nullable: false),
-                    PlayersPlayerId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompetitionPlayer", x => new { x.CompetitionsCompetitionId, x.PlayersPlayerId });
-                    table.ForeignKey(
-                        name: "FK_CompetitionPlayer_Competitions_CompetitionsCompetitionId",
-                        column: x => x.CompetitionsCompetitionId,
-                        principalTable: "Competitions",
-                        principalColumn: "CompetitionId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CompetitionPlayer_Players_PlayersPlayerId",
-                        column: x => x.PlayersPlayerId,
-                        principalTable: "Players",
-                        principalColumn: "PlayerId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GolfCourses",
                 columns: table => new
                 {
                     GolfCourseId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    VenueId = table.Column<int>(type: "integer", nullable: true)
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    ResortId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GolfCourses", x => x.GolfCourseId);
                     table.ForeignKey(
-                        name: "FK_GolfCourses_Venues_VenueId",
-                        column: x => x.VenueId,
-                        principalTable: "Venues",
-                        principalColumn: "VenueId");
+                        name: "FK_GolfCourses_Resorts_ResortId",
+                        column: x => x.ResortId,
+                        principalTable: "Resorts",
+                        principalColumn: "ResortId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,50 +123,61 @@ namespace CorneliusCup.Golf.API.Migrations
                 {
                     ScoreCardId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Handicap = table.Column<int>(type: "integer", nullable: false),
-                    Stableford = table.Column<int>(type: "integer", nullable: false),
-                    Gross = table.Column<int>(type: "integer", nullable: false),
-                    Nett = table.Column<int>(type: "integer", nullable: false),
-                    PlayerId = table.Column<int>(type: "integer", nullable: true),
-                    CompetitionId = table.Column<int>(type: "integer", nullable: true),
-                    GolfCourseId = table.Column<int>(type: "integer", nullable: true)
+                    Handicap = table.Column<short>(type: "smallint", nullable: false),
+                    Stableford = table.Column<short>(type: "smallint", nullable: false),
+                    Gross = table.Column<short>(type: "smallint", nullable: false),
+                    Nett = table.Column<short>(type: "smallint", nullable: false),
+                    Tee_TeeId = table.Column<int>(type: "integer", nullable: true),
+                    Tee_TeeType = table.Column<string>(type: "text", nullable: true),
+                    Tee_Par = table.Column<short>(type: "smallint", nullable: true),
+                    Tee_SSS = table.Column<short>(type: "smallint", nullable: true),
+                    Tee_CourseRating = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true),
+                    Tee_SlopeRating = table.Column<short>(type: "smallint", nullable: true),
+                    PlayerId = table.Column<int>(type: "integer", nullable: false),
+                    CompetitionId = table.Column<int>(type: "integer", nullable: false),
+                    GolfCourseId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ScoreCards", x => x.ScoreCardId);
+                    table.CheckConstraint("CK_ScoreCards_Tee_TeeType_Enum", "\"Tee_TeeType\" IN ('White', 'Yellow', 'Red')");
                     table.ForeignKey(
                         name: "FK_ScoreCards_Competitions_CompetitionId",
                         column: x => x.CompetitionId,
                         principalTable: "Competitions",
-                        principalColumn: "CompetitionId");
+                        principalColumn: "CompetitionId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ScoreCards_GolfCourses_GolfCourseId",
                         column: x => x.GolfCourseId,
                         principalTable: "GolfCourses",
-                        principalColumn: "GolfCourseId");
+                        principalColumn: "GolfCourseId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ScoreCards_Players_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "Players",
-                        principalColumn: "PlayerId");
+                        principalColumn: "PlayerId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Tees",
                 columns: table => new
                 {
-                    GolfCourseId = table.Column<int>(type: "integer", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    TeeId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Type = table.Column<string>(type: "text", nullable: false),
-                    Par = table.Column<int>(type: "integer", nullable: false),
-                    SSS = table.Column<int>(type: "integer", nullable: false),
-                    CourseRating = table.Column<int>(type: "integer", nullable: false),
-                    SlopeRating = table.Column<int>(type: "integer", nullable: false)
+                    GolfCourseId = table.Column<int>(type: "integer", nullable: false),
+                    TeeType = table.Column<string>(type: "text", nullable: false),
+                    Par = table.Column<short>(type: "smallint", nullable: false),
+                    SSS = table.Column<short>(type: "smallint", nullable: false),
+                    CourseRating = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: false),
+                    SlopeRating = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tees", x => new { x.GolfCourseId, x.Id });
+                    table.PrimaryKey("PK_Tees", x => new { x.GolfCourseId, x.TeeId });
+                    table.CheckConstraint("CK_Tees_TeeType_Enum", "\"TeeType\" IN ('White', 'Yellow', 'Red')");
                     table.ForeignKey(
                         name: "FK_Tees_GolfCourses_GolfCourseId",
                         column: x => x.GolfCourseId,
@@ -198,24 +187,24 @@ namespace CorneliusCup.Golf.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tee<HoleScore>",
+                name: "HoleScore",
                 columns: table => new
                 {
-                    ScoreCardId = table.Column<int>(type: "integer", nullable: false),
+                    TeeHoleScoreScoreCardId = table.Column<int>(name: "Tee<HoleScore>ScoreCardId", type: "integer", nullable: false),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Type = table.Column<string>(type: "text", nullable: false),
-                    Par = table.Column<int>(type: "integer", nullable: false),
-                    SSS = table.Column<int>(type: "integer", nullable: false),
-                    CourseRating = table.Column<int>(type: "integer", nullable: false),
-                    SlopeRating = table.Column<int>(type: "integer", nullable: false)
+                    Strokes = table.Column<short>(type: "smallint", nullable: false),
+                    Number = table.Column<short>(type: "smallint", nullable: false),
+                    Yards = table.Column<short>(type: "smallint", nullable: false),
+                    Par = table.Column<short>(type: "smallint", nullable: false),
+                    StrokeIndex = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tee<HoleScore>", x => new { x.ScoreCardId, x.Id });
+                    table.PrimaryKey("PK_HoleScore", x => new { x.TeeHoleScoreScoreCardId, x.Id });
                     table.ForeignKey(
-                        name: "FK_Tee<HoleScore>_ScoreCards_ScoreCardId",
-                        column: x => x.ScoreCardId,
+                        name: "FK_HoleScore_ScoreCards_Tee<HoleScore>ScoreCardId",
+                        column: x => x.TeeHoleScoreScoreCardId,
                         principalTable: "ScoreCards",
                         principalColumn: "ScoreCardId",
                         onDelete: ReferentialAction.Cascade);
@@ -229,10 +218,10 @@ namespace CorneliusCup.Golf.API.Migrations
                     TeeId = table.Column<int>(type: "integer", nullable: false),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Number = table.Column<int>(type: "integer", nullable: false),
-                    Yards = table.Column<int>(type: "integer", nullable: false),
-                    Par = table.Column<int>(type: "integer", nullable: false),
-                    StrokeIndex = table.Column<int>(type: "integer", nullable: false)
+                    Number = table.Column<short>(type: "smallint", nullable: false),
+                    Yards = table.Column<short>(type: "smallint", nullable: false),
+                    Par = table.Column<short>(type: "smallint", nullable: false),
+                    StrokeIndex = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -241,49 +230,43 @@ namespace CorneliusCup.Golf.API.Migrations
                         name: "FK_HoleDetail_Tees_TeeGolfCourseId_TeeId",
                         columns: x => new { x.TeeGolfCourseId, x.TeeId },
                         principalTable: "Tees",
-                        principalColumns: new[] { "GolfCourseId", "Id" },
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HoleScore",
-                columns: table => new
-                {
-                    TeeHoleScoreScoreCardId = table.Column<int>(name: "Tee<HoleScore>ScoreCardId", type: "integer", nullable: false),
-                    TeeHoleScoreId = table.Column<int>(name: "Tee<HoleScore>Id", type: "integer", nullable: false),
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Strokes = table.Column<int>(type: "integer", nullable: false),
-                    Number = table.Column<int>(type: "integer", nullable: false),
-                    Yards = table.Column<int>(type: "integer", nullable: false),
-                    Par = table.Column<int>(type: "integer", nullable: false),
-                    StrokeIndex = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HoleScore", x => new { x.TeeHoleScoreScoreCardId, x.TeeHoleScoreId, x.Id });
-                    table.ForeignKey(
-                        name: "FK_HoleScore_Tee<HoleScore>_Tee<HoleScore>ScoreCardId_Tee<Hole~",
-                        columns: x => new { x.TeeHoleScoreScoreCardId, x.TeeHoleScoreId },
-                        principalTable: "Tee<HoleScore>",
-                        principalColumns: new[] { "ScoreCardId", "Id" },
+                        principalColumns: new[] { "GolfCourseId", "TeeId" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompetitionPlayer_PlayersPlayerId",
-                table: "CompetitionPlayer",
-                column: "PlayersPlayerId");
+                name: "IX_Competitions_Name",
+                table: "Competitions",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_GolfCourses_VenueId",
+                name: "IX_GolfCourses_Name",
                 table: "GolfCourses",
-                column: "VenueId");
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GolfCourses_ResortId",
+                table: "GolfCourses",
+                column: "ResortId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_Email",
+                table: "Players",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PlayerTeam_TeamsTeamId",
                 table: "PlayerTeam",
                 column: "TeamsTeamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resorts_Name",
+                table: "Resorts",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScoreCards_CompetitionId",
@@ -301,16 +284,25 @@ namespace CorneliusCup.Golf.API.Migrations
                 column: "PlayerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ScoreCards_Tee_TeeType",
+                table: "ScoreCards",
+                column: "Tee_TeeType",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Teams_CompetitionId",
                 table: "Teams",
                 column: "CompetitionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tees_TeeType",
+                table: "Tees",
+                column: "TeeType",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CompetitionPlayer");
-
             migrationBuilder.DropTable(
                 name: "HoleDetail");
 
@@ -324,16 +316,10 @@ namespace CorneliusCup.Golf.API.Migrations
                 name: "Tees");
 
             migrationBuilder.DropTable(
-                name: "Tee<HoleScore>");
-
-            migrationBuilder.DropTable(
-                name: "Teams");
-
-            migrationBuilder.DropTable(
                 name: "ScoreCards");
 
             migrationBuilder.DropTable(
-                name: "Competitions");
+                name: "Teams");
 
             migrationBuilder.DropTable(
                 name: "GolfCourses");
@@ -342,7 +328,10 @@ namespace CorneliusCup.Golf.API.Migrations
                 name: "Players");
 
             migrationBuilder.DropTable(
-                name: "Venues");
+                name: "Competitions");
+
+            migrationBuilder.DropTable(
+                name: "Resorts");
         }
     }
 }

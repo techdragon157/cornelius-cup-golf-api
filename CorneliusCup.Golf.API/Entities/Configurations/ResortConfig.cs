@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CorneliusCup.Golf.API.Entities.Configurations
 {
-    public class VenueConfig : IEntityTypeConfiguration<Venue>
+    public class ResortConfig : IEntityTypeConfiguration<Resort>
     {
-        public void Configure(EntityTypeBuilder<Venue> builder)
+        public void Configure(EntityTypeBuilder<Resort> builder)
         {
             //builder.Property(x => x.Name)
             //    .HasMaxLength(256)
