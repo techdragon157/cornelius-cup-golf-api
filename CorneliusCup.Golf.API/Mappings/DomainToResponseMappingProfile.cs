@@ -20,11 +20,11 @@ namespace CorneliusCup.Golf.API.Mappings
                     opt => opt.MapFrom(src => src.GolfCourseId)
                 );
 
-            CreateMap<Tee, TeeResponse>()
-                .ForMember(
-                    dest => dest.Id,
-                    opt => opt.MapFrom(src => src.TeeId)
-                );
+            CreateMap<Tee, TeeResponse>();
+                //.ForMember(
+                //    dest => dest.Id,
+                //    opt => opt.MapFrom(src => src.TeeId)
+                //);
 
             CreateMap<HoleDetail, HoleDetailResponse>();
 

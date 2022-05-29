@@ -7,7 +7,7 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public int TeamId { get; set; }
 
-        [Required, MaxLength(256)]
+        [MaxLength(256)]
         public string? Name { get; set; }
 
         public ICollection<Player> Players { get; set; } = new List<Player>();

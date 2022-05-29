@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CorneliusCup.Golf.API.Entities;
+using CorneliusCup.Golf.API.Enums;
 using CorneliusCup.Golf.API.Requests;
 using CorneliusCup.Golf.API.Responses;
 using CorneliusCup.Golf.API.Services.Interfaces;
@@ -106,14 +107,14 @@ namespace CorneliusCup.Golf.API.Services
             return _mapper.Map<List<TeeResponse>>(golfCourse.Tees);
         }
 
-        public async Task<TeeResponse> GetGolfCourseTee(int resortId, int golfCourseId, int teeId)
+        public async Task<TeeResponse> GetGolfCourseTee(int resortId, int golfCourseId, string teeType)
         {
             var golfCourse = await _context.GolfCourses
                 .Where(x => x.ResortId == resortId)
                 .Where(x => x.GolfCourseId == golfCourseId)
                 .SingleAsync();
 
-            var tee = golfCourse.Tees.Single(x => x.TeeId == teeId);
+            var tee = golfCourse.Tees.Single(x => x.Type == (TeeType)Enum.Parse(typeof(TeeType), teeType));
 
             return _mapper.Map<TeeResponse>(tee);
         }

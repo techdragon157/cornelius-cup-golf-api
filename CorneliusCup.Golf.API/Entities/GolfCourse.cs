@@ -8,7 +8,7 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public int GolfCourseId { get; set; }
 
-        [Required, MaxLength(256)]
+        [MaxLength(256)]
         public string? Name { get; set; }
 
         public virtual ICollection<Tee> Tees { get; set; } = new List<Tee>();

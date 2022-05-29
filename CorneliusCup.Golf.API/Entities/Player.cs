@@ -9,13 +9,12 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public int PlayerId { get; set; }
 
-        [Required, MaxLength(256)]
+        [MaxLength(256)]
         public string? Name { get; set; }
 
-        [Required, EmailAddress, MaxLength(320)]
+        [MaxLength(320)]
         public string? Email { get; set; }
 
-        [Required, Range(0, 54), Column(TypeName = "smallint")]
         public short Handicap { get; set; }
 
         public ICollection<ScoreCard> ScoreCards { get; set; } = new List<ScoreCard>();

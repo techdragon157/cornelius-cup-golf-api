@@ -1,8 +1,8 @@
-﻿namespace CorneliusCup.Golf.API.Entities
+﻿namespace CorneliusCup.Golf.API.Enums
 {
     public enum TeeType
     {
-        White,
+        White = 1,
         Yellow,
         Red
     }

@@ -79,8 +79,6 @@ namespace CorneliusCup.Golf.API.Services
             var golfCourse = await _context.GolfCourses
                 .SingleAsync(x => x.GolfCourseId == scoreCardRequest.GolfCourseId);
 
-            var tee = golfCourse.Tees.Single(x => x.TeeId == scoreCardRequest.TeeId);
-
             var scoreCard = _mapper.Map<ScoreCard>(scoreCardRequest);
             scoreCard.Player = player;
             scoreCard.Competition = competition;

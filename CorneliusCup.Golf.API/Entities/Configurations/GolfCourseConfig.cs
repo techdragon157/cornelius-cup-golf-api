@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CorneliusCup.Golf.API.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CorneliusCup.Golf.API.Entities.Configurations
@@ -10,7 +11,7 @@ namespace CorneliusCup.Golf.API.Entities.Configurations
             builder.OwnsMany(x => x.Tees, y =>
                 {
                     y.OwnsMany(z => z.HoleDetails);
-                    y.Property(x => x.TeeType)
+                    y.Property(x => x.Type)
                     .HasConversion(
                         y => y.ToString(),
                         y => (TeeType)Enum.Parse(typeof(TeeType), y));

@@ -1,4 +1,4 @@
-﻿using CorneliusCup.Golf.API.Entities;
+﻿using CorneliusCup.Golf.API.Enums;
 
 namespace CorneliusCup.Golf.API.Requests
 {

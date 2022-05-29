@@ -24,6 +24,6 @@ namespace CorneliusCup.Golf.API.Services.Interfaces
 
         public Task<IEnumerable<TeeResponse>> GetGolfCourseTees(int resortId, int golfCourseId);
 
-        public Task<TeeResponse> GetGolfCourseTee(int resortId, int golfCourseId, int teeId);
+        public Task<TeeResponse> GetGolfCourseTee(int resortId, int golfCourseId, string teeType);
     }
 }

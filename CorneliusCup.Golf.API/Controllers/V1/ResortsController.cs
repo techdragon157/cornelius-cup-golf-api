@@ -226,13 +226,13 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [Route("{venueId}/golfcourses/{golfCourseId}/tees/{teeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TeeResponse>> GetVenueGolfCourseTee(int venueId, int golfCourseId, int teeId)
+        public async Task<ActionResult<TeeResponse>> GetVenueGolfCourseTee(int venueId, int golfCourseId, string teeType)
         {
             TeeResponse teeResponse;
 
             try
             {
-                teeResponse = await _venueService.GetGolfCourseTee(venueId, golfCourseId, teeId);
+                teeResponse = await _venueService.GetGolfCourseTee(venueId, golfCourseId, teeType);
             }
             catch (InvalidOperationException ex)
             {

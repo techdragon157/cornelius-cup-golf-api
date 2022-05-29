@@ -9,10 +9,9 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public int CompetitionId { get; set; }
 
-        [Required, MaxLength(256)]
+        [MaxLength(256)]
         public string? Name { get; set; }
 
-        [Required]
         public DateOnly startDate  { get; set; }
 
         [Required]
