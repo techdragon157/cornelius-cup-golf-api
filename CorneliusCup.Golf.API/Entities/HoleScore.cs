@@ -10,8 +10,18 @@ namespace CorneliusCup.Golf.API.Entities
 
         public short Stableford { get; set; }
 
-        //public string ScoreTerm => ScoreTerms.getStringRep(this.Strokes, this.Par);
+        public bool isNoReturn => Strokes == 0;
 
         public bool isHoleInOne => Strokes == 1;
+
+        public bool isCondor => Strokes - Par == -4;
+
+        public bool isAlbatross => Strokes - Par == -3;
+
+        public bool isEagle => Strokes - Par == -2;
+
+        public bool isBirdie => Strokes - Par == -1;
+
+        public bool isPar => Strokes - Par == 0;
     }
 }
