@@ -2,7 +2,7 @@
 {
     public class ScoreCardResponse
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public int Handicap { get; set; }
 

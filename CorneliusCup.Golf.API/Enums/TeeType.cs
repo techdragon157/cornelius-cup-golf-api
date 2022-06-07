@@ -4,6 +4,6 @@
     {
         White = 1,
         Yellow,
-        Red
+        Red 
     }
 }

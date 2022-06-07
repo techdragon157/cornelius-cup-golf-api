@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CorneliusCup.Golf.API.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace CorneliusCup.Golf.API.Entities
 {

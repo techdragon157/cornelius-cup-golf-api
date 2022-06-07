@@ -7,13 +7,13 @@ namespace CorneliusCup.Golf.API.Entities
     {
         public int ScoreCardId { get; set; }
 
-        public short Handicap { get; set; }
+        public int Handicap { get; set; }
 
-        public short Stableford { get; set; }
+        public int Stableford { get; set; }
 
-        public short Gross { get; set; }
+        public int Gross { get; set; }
 
-        public short Nett { get; set; }
+        public int Nett { get; set; }
 
         public Tee<HoleScore>? Tee { get; set; }
 

@@ -15,7 +15,7 @@ namespace CorneliusCup.Golf.API.Entities
         [MaxLength(320)]
         public string? Email { get; set; }
 
-        public short Handicap { get; set; }
+        public int Handicap { get; set; }
 
         public ICollection<ScoreCard> ScoreCards { get; set; } = new List<ScoreCard>();
 

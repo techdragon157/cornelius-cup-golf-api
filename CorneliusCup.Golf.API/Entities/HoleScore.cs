@@ -6,9 +6,11 @@ namespace CorneliusCup.Golf.API.Entities
     [Owned]
     public class HoleScore: HoleDetail
     {
-        public short Strokes { get; set; }
+        public int Strokes { get; set; }
 
-        public short Stableford { get; set; }
+        public int Nett { get; set; }
+
+        public int Stableford { get; set; }
 
         public bool isNoReturn => Strokes == 0;
 

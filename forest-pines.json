@@ -2,7 +2,7 @@
   "name": "Forest-Pines",
   "tees": [
     {
-      "teeType": 1,
+      "type": "Yellow",
       "par": 73,
       "sss": 72,
       "courseRating": 72.4,

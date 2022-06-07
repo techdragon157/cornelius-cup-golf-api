@@ -8,6 +8,6 @@ namespace CorneliusCup.Golf.API.Requests
 
         public string? Email { get; set; }
 
-        public short Handicap { get; set; }
+        public int Handicap { get; set; }
     }
 }

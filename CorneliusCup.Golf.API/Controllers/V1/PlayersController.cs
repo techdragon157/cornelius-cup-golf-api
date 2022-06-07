@@ -1,7 +1,9 @@
 ﻿using CorneliusCup.Golf.API.Requests;
 using CorneliusCup.Golf.API.Responses;
 using CorneliusCup.Golf.API.Services.Interfaces;
+using HashidsNet;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -15,11 +17,13 @@ namespace CorneliusCup.Golf.API.Controllers.V1
     public class PlayersController : ControllerBase
     {
         private readonly IPlayerService _playerService;
+        private readonly IHashids _hashids;
         private readonly ILogger<PlayersController> _logger;
 
-        public PlayersController(IPlayerService playerService, ILogger<PlayersController> logger)
+        public PlayersController(IPlayerService playerService, IHashids hashids, ILogger<PlayersController> logger)
         {
             _playerService = playerService;
+            _hashids = hashids;
             _logger = logger;
         }
 
@@ -27,11 +31,11 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [SwaggerOperation("Get a list of all Players")]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<Response<PlayerResponse>>> GetVenues()
+        public async Task<ActionResult<Response<PlayerResponse>>> GetPlayers()
         {
-            var venuesResponse = await _playerService.GetPlayers();
+            var playersResponse = await _playerService.GetPlayers();
 
-            return Ok(new Response<PlayerResponse>(venuesResponse));
+            return Ok(new Response<PlayerResponse>(playersResponse));
         }
 
         [HttpPost]
@@ -39,17 +43,13 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [MapToApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<PlayerResponse>> CreateVenue(PlayerRequest playerRequest)
+        public async Task<ActionResult<PlayerResponse>> CreatePlayer(PlayerRequest playerRequest)
         {
-            PlayerResponse playerResponse;
+            PlayerResponse playerResponse = await _playerService.CreatePlayer(playerRequest);
 
-            try
+            if (playerResponse is null)
             {
-                playerResponse = await _playerService.CreatePlayer(playerRequest);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Problem(ex.Message, statusCode: 400);
+                return BadRequest();
             }
 
             return CreatedAtAction(nameof(GetPlayer), new { playerId = playerResponse.Id }, playerResponse);
@@ -61,17 +61,20 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [Route("{playerId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<PlayerResponse>> GetPlayer(int playerId)
+        public async Task<ActionResult<PlayerResponse>> GetPlayer(string playerId)
         {
-            PlayerResponse playerResponse;
-
-            try
+            var rawPlayerId = _hashids.Decode(playerId);
+            
+            if(rawPlayerId.Length == 0)
             {
-                playerResponse = await _playerService.GetPlayer(playerId);
+                return NotFound();
             }
-            catch (InvalidOperationException ex)
+
+            var playerResponse = await _playerService.GetPlayer(rawPlayerId[0]);
+
+            if (playerResponse is null)
             {
-                return Problem(ex.Message, statusCode: 404);
+                return NotFound();
             }
 
             return Ok(playerResponse);
@@ -84,19 +87,20 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> UpdateVenue(int playerId, PlayerRequest playerRequest)
+        public async Task<ActionResult> UpdatePlayer(string playerId, PlayerRequest playerRequest)
         {
-            try
+            var rawPlayerId = _hashids.Decode(playerId);
+            
+            if (rawPlayerId.Length == 0)
             {
-                await _playerService.UpdatePlayer(playerId, playerRequest);
+                return NotFound();
             }
-            catch (DbUpdateException ex)
+
+            var result = await _playerService.UpdatePlayer(rawPlayerId[0], playerRequest);
+
+            if (result is null)
             {
-                return Problem(ex.Message, statusCode: 400);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Problem(ex.Message, statusCode: 404);
+                return BadRequest();
             }
 
             return NoContent();
@@ -107,21 +111,21 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [MapToApiVersion("1.0")]
         [Route("{playerId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> DeleteVenue(int playerId)
+        public async Task<ActionResult> DeletePlayer(string playerId)
         {
-            try
+            var rawPlayerId = _hashids.Decode(playerId);
+            
+            if (rawPlayerId.Length == 0)
             {
-                await _playerService.DeletePlayer(playerId);
+                return NotFound();
             }
-            catch (DbUpdateException ex)
+
+            var result = await _playerService.DeletePlayer(rawPlayerId[0]);
+
+            if (result is null)
             {
-                return Problem(ex.Message, statusCode: 400);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Problem(ex.Message, statusCode: 404);
+                return NotFound();
             }
 
             return NoContent();
@@ -133,17 +137,20 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [Route("{playerId}/scorecards")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Response<ScoreCardResponse>>> GetPlayerScoreCards(int playerId)
+        public async Task<ActionResult<Response<ScoreCardResponse>>> GetPlayerScoreCards(string playerId)
         {
-            IEnumerable<ScoreCardResponse> scoreCardResponse;
-
-            try
+            var rawPlayerId = _hashids.Decode(playerId);
+            
+            if (rawPlayerId.Length == 0)
             {
-                scoreCardResponse = await _playerService.GetScoreCards(playerId);
+                return NotFound();
             }
-            catch (InvalidOperationException ex)
+
+            var scoreCardResponse = await _playerService.GetScoreCards(rawPlayerId[0]);
+
+            if(scoreCardResponse is null)
             {
-                return Problem(ex.Message, statusCode: 404);
+                return NotFound();
             }
 
             return Ok(new Response<ScoreCardResponse>(scoreCardResponse));
@@ -156,21 +163,20 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ScoreCardResponse>> CreatePlayerScoreCard(int playerId, ScoreCardRequest scoreCardRequest)
+        public async Task<ActionResult<ScoreCardResponse>> CreatePlayerScoreCard(string playerId, ScoreCardRequest scoreCardRequest)
         {
-            ScoreCardResponse scoreCardResponse;
+            var rawPlayerId = _hashids.Decode(playerId);
+            
+            if (rawPlayerId.Length == 0)
+            {
+                return NotFound();
+            }
 
-            try
+            var scoreCardResponse = await _playerService.CreateScoreCard(rawPlayerId[0], scoreCardRequest);
+
+            if(scoreCardResponse is null)
             {
-                scoreCardResponse = await _playerService.CreateScoreCard(playerId, scoreCardRequest);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Problem(ex.Message, statusCode: 400);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Problem(ex.Message, statusCode: 404);
+                return BadRequest();
             }
 
             return CreatedAtAction(nameof(GetPlayerScoreCard), new { playerId = playerId, scoreCardId = scoreCardResponse.Id }, scoreCardResponse);
@@ -182,20 +188,74 @@ namespace CorneliusCup.Golf.API.Controllers.V1
         [Route("{playerId}/scorecards/{scoreCardId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ScoreCardResponse>> GetPlayerScoreCard(int playerId, int scoreCardId)
+        public async Task<ActionResult<ScoreCardResponse>> GetPlayerScoreCard(string playerId, string scoreCardId)
         {
-            ScoreCardResponse scoreCardResponse;
-
-            try
+            var rawPlayerId = _hashids.Decode(playerId);
+            var rawScoreCardId = _hashids.Decode(scoreCardId);
+            if (rawPlayerId.Length == 0 || rawScoreCardId.Length == 0)
             {
-                scoreCardResponse = await _playerService.GetScoreCard(playerId, scoreCardId);
+                return NotFound();
             }
-            catch (InvalidOperationException ex)
+
+            var scoreCardResponse = await _playerService.GetScoreCard(rawPlayerId[0], rawScoreCardId[0]);
+
+            if(scoreCardResponse is null)
             {
-                return Problem(ex.Message, statusCode: 404);
+                return NotFound();
             }
 
             return Ok(scoreCardResponse);
+        }
+
+        [HttpPut]
+        [SwaggerOperation("Update a Score Card")]
+        [MapToApiVersion("1.0")]
+        [Route("{playerId}/scorecards/{scoreCardId}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ScoreCardResponse>> CreatePlayerScoreCard(string playerId, string scoreCardId, ScoreCardRequest scoreCardRequest)
+        {
+            var rawPlayerId = _hashids.Decode(playerId);
+            var rawScoreCardId = _hashids.Decode(scoreCardId);
+            if (rawPlayerId.Length == 0 || rawScoreCardId.Length == 0)
+            {
+                return NotFound();
+            }
+
+            var result = await _playerService.UpdateScoreCard(rawPlayerId[0], rawScoreCardId[0], scoreCardRequest);
+
+            if (result is null)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [SwaggerOperation("Delete a ScoreCard")]
+        [MapToApiVersion("1.0")]
+        [Route("{playerId}/scorecards/{scoreCardId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> DeleteScoreCard(string playerId, string scoreCardId)
+        {
+            var rawPlayerId = _hashids.Decode(playerId);
+            var rawScoreCardId = _hashids.Decode(scoreCardId);
+            if (rawPlayerId.Length == 0 || rawScoreCardId.Length == 0)
+            {
+                return NotFound();
+            }
+
+            var result = await _playerService.DeleteScoreCard(rawPlayerId[0], rawScoreCardId[0]);
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
 
     }

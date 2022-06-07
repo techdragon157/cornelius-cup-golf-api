@@ -2,6 +2,7 @@ using CorneliusCup.Golf.API;
 using CorneliusCup.Golf.API.Entities;
 using CorneliusCup.Golf.API.Services;
 using CorneliusCup.Golf.API.Services.Interfaces;
+using HashidsNet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,8 @@ else
 // Add services to the container.
 builder.Services.Configure<RouteOptions>(options =>
 {
-    options.LowercaseUrls = true;
-    options.LowercaseQueryStrings = true;
+    options.LowercaseUrls = false;
+    options.LowercaseQueryStrings = false;
 });
 
 builder.Services.AddControllers().AddJsonOptions(options => 
@@ -42,6 +43,10 @@ builder.Services.AddDbContext<CorneliusCupDbContext>(options =>
         .UseValidationCheckConstraints()
         .UseEnumCheckConstraints();
 });
+
+var Hashids = new Hashids(builder.Configuration.GetValue<string>("HashIds:Salt"), builder.Configuration.GetValue<int>("HashIds:MinHashLength"));
+
+builder.Services.AddSingleton<IHashids>(_ => Hashids);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

@@ -7,12 +7,12 @@ namespace CorneliusCup.Golf.API.Entities
     [Owned]
     public class HoleDetail
     {
-        public short Number { get; set; }
+        public int Number { get; set; }
 
-        public short Yards { get; set; }
+        public int Yards { get; set; }
 
-        public short Par { get; set; }
+        public int Par { get; set; }
 
-        public short StrokeIndex { get; set; }
+        public int StrokeIndex { get; set; }
     }
 }
